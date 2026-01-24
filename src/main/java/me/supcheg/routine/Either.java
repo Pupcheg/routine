@@ -1,6 +1,7 @@
 package me.supcheg.routine;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public sealed interface Either<L, R> {
@@ -62,5 +63,23 @@ public sealed interface Either<L, R> {
 
     default Optional<R> right() {
         return fold(_ -> Optional.empty(), Optional::of);
+    }
+
+    default Either<L, R> peek(Consumer<? super L> left, Consumer<? super R> right) {
+        return map(value -> {
+            left.accept(value);
+            return value;
+        }, value -> {
+            right.accept(value);
+            return value;
+        });
+    }
+
+    default Either<L, R> peekLeft(Consumer<? super L> left) {
+        return peek(left, _ -> {});
+    }
+
+    default Either<L, R> peekRight(Consumer<? super R> right) {
+        return peek(_ -> {}, right);
     }
 }
