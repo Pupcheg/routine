@@ -22,10 +22,10 @@ public final class EitherCollectors {
     /// @param rightDownstream collector to accumulate right values
     /// @param <L>             type of left values
     /// @param <R>             type of right values
-    /// @param <ILS>           intermediate accumulation type of the left collector
-    /// @param <IRS>           intermediate accumulation type of the right collector
-    /// @param <LS>            final collection type for left values
-    /// @param <RS>            final collection type for right values
+    /// @param <LA>            intermediate accumulation type of the left collector
+    /// @param <RA>            intermediate accumulation type of the right collector
+    /// @param <LR>            final type for left values
+    /// @param <RR>            final type for right values
     /// @return a [Collector] producing a [Pair] containing all left and right values from the stream
     ///
     /// ```java
@@ -45,20 +45,20 @@ public final class EitherCollectors {
     /// // result.left() -> [1, 2]
     /// // result.right() -> ["a", "b"]
     /// ```
-    public static <L, R, ILS, IRS, LS, RS> Collector<Either<L, R>, ?, Pair<LS, RS>> groupingTo(
-            Collector<? super L, ILS, ? extends LS> leftDownstream,
-            Collector<? super R, IRS, ? extends RS> rightDownstream) {
+    public static <L, R, LA, RA, LR, RR> Collector<Either<L, R>, ?, Pair<LR, RR>> groupingTo(
+            Collector<? super L, LA, ? extends LR> leftDownstream,
+            Collector<? super R, RA, ? extends RR> rightDownstream) {
         return Collector.of(
                 () -> pair(
                         leftDownstream.supplier().get(),
                         rightDownstream.supplier().get()),
-                (Pair<ILS, IRS> pair, Either<L, R> either) -> either.accept(
+                (Pair<LA, RA> pair, Either<L, R> either) -> either.accept(
                         value -> leftDownstream.accumulator().accept(pair.left(), value),
                         value -> rightDownstream.accumulator().accept(pair.right(), value)),
-                (Pair<ILS, IRS> left, Pair<ILS, IRS> right) -> left.map(
+                (Pair<LA, RA> left, Pair<LA, RA> right) -> left.map(
                         value -> leftDownstream.combiner().apply(value, right.left()),
                         value -> rightDownstream.combiner().apply(value, right.right())),
-                (Pair<ILS, IRS> pair) -> pair.map(leftDownstream.finisher(), rightDownstream.finisher()),
+                (Pair<LA, RA> pair) -> pair.map(leftDownstream.finisher(), rightDownstream.finisher()),
                 intersection(leftDownstream.characteristics(), rightDownstream.characteristics()));
     }
 
