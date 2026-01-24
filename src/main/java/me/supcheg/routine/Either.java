@@ -6,9 +6,19 @@ import java.util.function.Function;
 
 public sealed interface Either<L, R> {
 
-    record Left<L, R>(L value) implements Either<L, R> {}
+    record Left<L, R>(L value) implements Either<L, R> {
+        @SuppressWarnings("unchecked")
+        public <NR> Left<L, NR> castRight() {
+            return (Left<L, NR>) this;
+        }
+    }
 
-    record Right<L, R>(R value) implements Either<L, R> {}
+    record Right<L, R>(R value) implements Either<L, R> {
+        @SuppressWarnings("unchecked")
+        public <NL> Right<NL, R> castLeft() {
+            return (Right<NL, R>) this;
+        }
+    }
 
     static <L, R> Left<L, R> left(L value) {
         return new Left<>(value);
@@ -20,15 +30,24 @@ public sealed interface Either<L, R> {
 
     default <NL, NR> Either<NL, NR> map(
             Function<? super L, ? extends NL> left, Function<? super R, ? extends NR> right) {
-        return flatMap(value -> left(left.apply(value)), value -> right(right.apply(value)));
+        return switch (this) {
+            case Left(var value) -> left(left.apply(value));
+            case Right(var value) -> right(right.apply(value));
+        };
     }
 
     default <NL> Either<NL, ? extends R> mapLeft(Function<? super L, ? extends NL> left) {
-        return map(left, Function.identity());
+        return switch (this) {
+            case Left(var value) -> left(left.apply(value));
+            case Right<L, R> right -> right.castLeft();
+        };
     }
 
     default <NR> Either<L, NR> mapRight(Function<? super R, ? extends NR> right) {
-        return map(Function.identity(), right);
+        return switch (this) {
+            case Left<L, R> left -> left.castRight();
+            case Right(var value) -> right(right.apply(value));
+        };
     }
 
     default <NL, NR> Either<NL, NR> flatMap(
@@ -40,11 +59,17 @@ public sealed interface Either<L, R> {
     }
 
     default <NL> Either<NL, R> flatMapLeft(Function<? super L, Either<NL, R>> left) {
-        return flatMap(left, Either::right);
+        return switch (this) {
+            case Left(var value) -> left.apply(value);
+            case Right<L, R> right -> right.castLeft();
+        };
     }
 
     default <NR> Either<L, NR> flatMapRight(Function<? super R, Either<L, NR>> right) {
-        return flatMap(Either::left, right);
+        return switch (this) {
+            case Left<L, R> left -> left.castRight();
+            case Right(var value) -> right.apply(value);
+        };
     }
 
     default Either<R, L> flip() {
@@ -67,30 +92,32 @@ public sealed interface Either<L, R> {
     }
 
     default Either<L, R> peek(Consumer<? super L> left, Consumer<? super R> right) {
-        return map(
-                value -> {
-                    left.accept(value);
-                    return value;
-                },
-                value -> {
-                    right.accept(value);
-                    return value;
-                });
+        switch (this) {
+            case Left(var value) -> left.accept(value);
+            case Right(var value) -> right.accept(value);
+        }
+        return this;
     }
 
     default Either<L, R> peekLeft(Consumer<? super L> left) {
-        return peek(left, _ -> {});
+        ifLeft(left);
+        return this;
     }
 
     default Either<L, R> peekRight(Consumer<? super R> right) {
-        return peek(_ -> {}, right);
+        ifRight(right);
+        return this;
     }
 
     default void ifLeft(Consumer<? super L> left) {
-        peekLeft(left);
+        if (this instanceof Left(var value)) {
+            left.accept(value);
+        }
     }
 
     default void ifRight(Consumer<? super R> right) {
-        peekRight(right);
+        if (this instanceof Right(var value)) {
+            right.accept(value);
+        }
     }
 }
