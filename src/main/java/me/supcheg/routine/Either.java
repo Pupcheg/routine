@@ -7,6 +7,7 @@ import java.util.function.Function;
 public sealed interface Either<L, R> {
 
     record Left<L, R>(L value) implements Either<L, R> {}
+
     record Right<L, R>(R value) implements Either<L, R> {}
 
     static <L, R> Left<L, R> left(L value) {
@@ -17,8 +18,8 @@ public sealed interface Either<L, R> {
         return new Right<>(value);
     }
 
-    default <NL, NR> Either<NL, NR> map(Function<? super L, ? extends NL> left,
-                                                            Function<? super R, ? extends NR> right) {
+    default <NL, NR> Either<NL, NR> map(
+            Function<? super L, ? extends NL> left, Function<? super R, ? extends NR> right) {
         return flatMap(value -> left(left.apply(value)), value -> right(right.apply(value)));
     }
 
@@ -30,8 +31,8 @@ public sealed interface Either<L, R> {
         return map(Function.identity(), right);
     }
 
-    default <NL, NR> Either<NL, NR> flatMap(Function<? super L, Either<NL, NR>> left,
-                                            Function<? super R, Either<NL, NR>> right) {
+    default <NL, NR> Either<NL, NR> flatMap(
+            Function<? super L, Either<NL, NR>> left, Function<? super R, Either<NL, NR>> right) {
         return switch (this) {
             case Left(var value) -> left.apply(value);
             case Right(var value) -> right.apply(value);
@@ -66,13 +67,15 @@ public sealed interface Either<L, R> {
     }
 
     default Either<L, R> peek(Consumer<? super L> left, Consumer<? super R> right) {
-        return map(value -> {
-            left.accept(value);
-            return value;
-        }, value -> {
-            right.accept(value);
-            return value;
-        });
+        return map(
+                value -> {
+                    left.accept(value);
+                    return value;
+                },
+                value -> {
+                    right.accept(value);
+                    return value;
+                });
     }
 
     default Either<L, R> peekLeft(Consumer<? super L> left) {

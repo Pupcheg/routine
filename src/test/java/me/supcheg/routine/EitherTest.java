@@ -55,7 +55,8 @@ class EitherTest {
     @Test
     void flatMapRight() {
         assertThat(left(LEFT).flatMapRight(r -> left(r + FLAT_MAP + RIGHT))).isEqualTo(left(LEFT));
-        assertThat(right(RIGHT).flatMapRight(r -> left(r + FLAT_MAP + RIGHT))).isEqualTo(left(RIGHT + FLAT_MAP + RIGHT));
+        assertThat(right(RIGHT).flatMapRight(r -> left(r + FLAT_MAP + RIGHT)))
+                .isEqualTo(left(RIGHT + FLAT_MAP + RIGHT));
     }
 
     @Test
@@ -66,8 +67,10 @@ class EitherTest {
 
     @Test
     void fold() {
-        assertThat((String) left(LEFT).fold(l -> l + FOLD + LEFT, r -> r + FOLD + RIGHT)).isEqualTo(LEFT + FOLD + LEFT);
-        assertThat((String) right(RIGHT).fold(l -> l + FOLD + LEFT, r -> r + FOLD + RIGHT)).isEqualTo(RIGHT + FOLD + RIGHT);
+        assertThat((String) left(LEFT).fold(l -> l + FOLD + LEFT, r -> r + FOLD + RIGHT))
+                .isEqualTo(LEFT + FOLD + LEFT);
+        assertThat((String) right(RIGHT).fold(l -> l + FOLD + LEFT, r -> r + FOLD + RIGHT))
+                .isEqualTo(RIGHT + FOLD + RIGHT);
     }
 
     @Test

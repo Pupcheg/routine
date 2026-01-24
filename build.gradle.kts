@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     id("com.bakdata.mockito") version "1.11.1"
+    id("com.diffplug.spotless") version "8.2.0"
 }
 
 group = "me.supcheg"
@@ -19,6 +20,18 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+spotless {
+    java {
+        palantirJavaFormat()
+
+        importOrder("", "java|javax", "\\#")
+        removeUnusedImports()
+        forbidWildcardImports()
+
+        targetExclude("build/**")
+    }
 }
 
 tasks {
