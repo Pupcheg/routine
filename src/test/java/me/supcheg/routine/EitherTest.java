@@ -134,6 +134,34 @@ class EitherTest {
         verify(peek, only()).accept(any());
     }
 
+    @Test
+    void leftIfLeft() {
+        var ifLeft = consumerMock();
+        left(LEFT).ifLeft(ifLeft);
+        verify(ifLeft, only()).accept(any());
+    }
+
+    @Test
+    void rightIfLeft() {
+        var ifLeft = consumerMock();
+        right(LEFT).ifLeft(ifLeft);
+        verify(ifLeft, never()).accept(any());
+    }
+
+    @Test
+    void leftIfRight() {
+        var ifRight = consumerMock();
+        left(LEFT).ifRight(ifRight);
+        verify(ifRight, never()).accept(any());
+    }
+
+    @Test
+    void rightIfRight() {
+        var ifRight = consumerMock();
+        right(LEFT).ifRight(ifRight);
+        verify(ifRight, only()).accept(any());
+    }
+
     @SuppressWarnings("unchecked")
     private static Consumer<String> consumerMock() {
         return (Consumer<String>) mock(Consumer.class);

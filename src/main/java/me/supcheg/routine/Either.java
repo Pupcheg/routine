@@ -82,4 +82,12 @@ public sealed interface Either<L, R> {
     default Either<L, R> peekRight(Consumer<? super R> right) {
         return peek(_ -> {}, right);
     }
+
+    default void ifLeft(Consumer<? super L> left) {
+        peekLeft(left);
+    }
+
+    default void ifRight(Consumer<? super R> right) {
+        peekRight(right);
+    }
 }
