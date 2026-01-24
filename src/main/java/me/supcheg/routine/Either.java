@@ -16,16 +16,16 @@ public sealed interface Either<L, R> {
         return new Right<>(value);
     }
 
-    default <NL, NR> Either<? extends NL, ? extends NR> map(Function<? super L, ? extends NL> left,
+    default <NL, NR> Either<NL, NR> map(Function<? super L, ? extends NL> left,
                                                             Function<? super R, ? extends NR> right) {
         return flatMap(value -> left(left.apply(value)), value -> right(right.apply(value)));
     }
 
-    default <NL> Either<? extends NL, ? extends R> mapLeft(Function<? super L, ? extends NL> left) {
+    default <NL> Either<NL, ? extends R> mapLeft(Function<? super L, ? extends NL> left) {
         return map(left, Function.identity());
     }
 
-    default <NR> Either<? extends L, ? extends NR> mapRight(Function<? super R, ? extends NR> right) {
+    default <NR> Either<L, NR> mapRight(Function<? super R, ? extends NR> right) {
         return map(Function.identity(), right);
     }
 
