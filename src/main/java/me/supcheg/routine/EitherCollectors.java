@@ -1,6 +1,5 @@
 package me.supcheg.routine;
 
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collector;
@@ -12,10 +11,9 @@ import static me.supcheg.routine.Pair.pair;
 public final class EitherCollectors {
     private EitherCollectors() {}
 
-    public static <L, R, ILS, IRS, LS extends Collection<L>, RS extends Collection<R>>
-            Collector<Either<L, R>, ?, Pair<LS, RS>> toCollectionsPair(
-                    Collector<? super L, ILS, ? extends LS> leftDownstream,
-                    Collector<? super R, IRS, ? extends RS> rightDownstream) {
+    public static <L, R, ILS, IRS, LS, RS> Collector<Either<L, R>, ?, Pair<LS, RS>> groupingTo(
+            Collector<? super L, ILS, ? extends LS> leftDownstream,
+            Collector<? super R, IRS, ? extends RS> rightDownstream) {
         return Collector.of(
                 () -> pair(
                         leftDownstream.supplier().get(),

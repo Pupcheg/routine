@@ -9,7 +9,7 @@ import static java.util.stream.Collector.Characteristics.UNORDERED;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Collectors.toUnmodifiableSet;
-import static me.supcheg.routine.EitherCollectors.toCollectionsPair;
+import static me.supcheg.routine.EitherCollectors.groupingTo;
 import static me.supcheg.routine.TestEithers.LEFT;
 import static me.supcheg.routine.TestEithers.RIGHT;
 import static me.supcheg.routine.TestEithers.left;
@@ -38,7 +38,7 @@ class EitherStreamTest {
         var result = Stream.concat(
                         Stream.generate(() -> left(LEFT)).limit(perTypeAmount),
                         Stream.generate(() -> right(RIGHT)).limit(perTypeAmount))
-                .collect(toCollectionsPair(toList(), toList()));
+                .collect(groupingTo(toList(), toList()));
 
         assertThat(result.left()).hasSize(perTypeAmount).allMatch(LEFT::equals);
         assertThat(result.right()).hasSize(perTypeAmount).allMatch(RIGHT::equals);
@@ -52,7 +52,7 @@ class EitherStreamTest {
                         Stream.generate(() -> left(LEFT)).limit(perTypeAmount),
                         Stream.generate(() -> right(RIGHT)).limit(perTypeAmount))
                 .parallel()
-                .collect(toCollectionsPair(toList(), toList()));
+                .collect(groupingTo(toList(), toList()));
 
         assertThat(result.left()).hasSize(perTypeAmount).allMatch(LEFT::equals);
         assertThat(result.right()).hasSize(perTypeAmount).allMatch(RIGHT::equals);
@@ -60,11 +60,10 @@ class EitherStreamTest {
 
     @Test
     void characteristics() {
-        assertThat(toCollectionsPair(toSet(), toSet()).characteristics())
+        assertThat(groupingTo(toSet(), toSet()).characteristics())
                 .containsExactlyInAnyOrder(IDENTITY_FINISH, UNORDERED);
-        assertThat(toCollectionsPair(toUnmodifiableSet(), toSet()).characteristics())
-                .containsExactlyInAnyOrder(UNORDERED);
-        assertThat(toCollectionsPair(toUnmodifiableSet(), toUnmodifiableSet()).characteristics())
+        assertThat(groupingTo(toUnmodifiableSet(), toSet()).characteristics()).containsExactlyInAnyOrder(UNORDERED);
+        assertThat(groupingTo(toUnmodifiableSet(), toUnmodifiableSet()).characteristics())
                 .containsExactlyInAnyOrder(UNORDERED);
     }
 }
