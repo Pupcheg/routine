@@ -1,5 +1,6 @@
 package me.supcheg.routine;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -7,6 +8,11 @@ import java.util.function.Function;
 public sealed interface Either<L, R> {
 
     record Left<L, R>(L value) implements Either<L, R> {
+
+        public Left {
+            Objects.requireNonNull(value, "value");
+        }
+
         @SuppressWarnings("unchecked")
         public <NR> Left<L, NR> castRight() {
             return (Left<L, NR>) this;
@@ -14,6 +20,11 @@ public sealed interface Either<L, R> {
     }
 
     record Right<L, R>(R value) implements Either<L, R> {
+
+        public Right {
+            Objects.requireNonNull(value, "value");
+        }
+
         @SuppressWarnings("unchecked")
         public <NL> Right<NL, R> castLeft() {
             return (Right<NL, R>) this;
@@ -107,6 +118,13 @@ public sealed interface Either<L, R> {
     default Either<L, R> peekRight(Consumer<? super R> right) {
         ifRight(right);
         return this;
+    }
+
+    default void accept(Consumer<? super L> left, Consumer<? super R> right) {
+        switch (this) {
+            case Left(var value) -> left.accept(value);
+            case Right(var value) -> right.accept(value);
+        }
     }
 
     default void ifLeft(Consumer<? super L> left) {
