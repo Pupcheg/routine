@@ -2,19 +2,18 @@ package me.supcheg.routine;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Consumer;
-
+import static me.supcheg.routine.TestEithers.LEFT;
+import static me.supcheg.routine.TestEithers.RIGHT;
+import static me.supcheg.routine.TestEithers.consumerMock;
+import static me.supcheg.routine.TestEithers.left;
+import static me.supcheg.routine.TestEithers.right;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 class EitherTest {
-
-    static final String LEFT = "_left";
-    static final String RIGHT = "_right";
 
     static final String MAP = "_map";
     static final String FOLD = "_fold";
@@ -163,18 +162,5 @@ class EitherTest {
         var ifRight = consumerMock();
         right(LEFT).ifRight(ifRight);
         verify(ifRight, only()).accept(any());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Consumer<String> consumerMock() {
-        return (Consumer<String>) mock(Consumer.class);
-    }
-
-    private static Either.Left<String, String> left(String value) {
-        return Either.left(value);
-    }
-
-    private static Either.Right<String, String> right(String value) {
-        return Either.right(value);
     }
 }
