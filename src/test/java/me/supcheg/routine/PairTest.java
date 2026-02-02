@@ -13,6 +13,7 @@ class PairTest {
     static final String LEFT = "_left";
     static final String RIGHT = "_right";
     static final String MAP = "_map";
+    static final String FLAT_MAP = "_flat_map";
     static final String WITH = "_with";
     static final String FOLD = "_fold";
 
@@ -22,6 +23,16 @@ class PairTest {
                 .isEqualTo(pair(LEFT + MAP + LEFT, RIGHT + MAP + RIGHT));
         assertThat(pair(LEFT, RIGHT).mapLeft(left -> left + MAP + LEFT)).isEqualTo(pair(LEFT + MAP + LEFT, RIGHT));
         assertThat(pair(LEFT, RIGHT).mapRight(right -> right + MAP + RIGHT)).isEqualTo(pair(LEFT, RIGHT + MAP + RIGHT));
+    }
+
+    @Test
+    void flatMap() {
+        assertThat(pair(LEFT, RIGHT).flatMap((left, right) -> pair(FLAT_MAP + left, FLAT_MAP + right)))
+                .isEqualTo(pair(FLAT_MAP + LEFT, FLAT_MAP + RIGHT));
+        assertThat(pair(LEFT, RIGHT).flatMapLeft(left -> pair(FLAT_MAP + left, FLAT_MAP + left)))
+                .isEqualTo(pair(FLAT_MAP + LEFT, FLAT_MAP + LEFT));
+        assertThat(pair(LEFT, RIGHT).flatMapRight(right -> pair(FLAT_MAP + right, FLAT_MAP + right)))
+                .isEqualTo(pair(FLAT_MAP + RIGHT, FLAT_MAP + RIGHT));
     }
 
     @Test

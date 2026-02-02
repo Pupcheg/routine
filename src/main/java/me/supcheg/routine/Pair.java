@@ -80,6 +80,36 @@ public record Pair<L, R>(L left, R right) {
         return new Pair<>(left, right.apply(this.right));
     }
 
+    /// Performs monadic-like composition over both components of this [Pair].
+    ///
+    /// @param function a bifunction applied to both components
+    /// @param <NL>     new left type
+    /// @param <NR>     new right type
+    /// @return [Pair] produced by the given function
+    public <NL, NR> Pair<NL, NR> flatMap(BiFunction<? super L, ? super R, Pair<NL, NR>> function) {
+        return function.apply(left, right);
+    }
+
+    /// Performs composition based on the left component only.
+    ///
+    /// @param function mapping function for the left component
+    /// @param <NL>     new left type
+    /// @param <NR>     new right type
+    /// @return [Pair] produced by applying the function to the left component
+    public <NL, NR> Pair<NL, NR> flatMapLeft(Function<? super L, Pair<NL, NR>> function) {
+        return function.apply(left);
+    }
+
+    /// Performs composition based on the right component only.
+    ///
+    /// @param function mapping function for the right component
+    /// @param <NL>     new left type
+    /// @param <NR>     new right type
+    /// @return [Pair] produced by applying the function to the right component
+    public <NL, NR> Pair<NL, NR> flatMapRight(Function<? super R, Pair<NL, NR>> function) {
+        return function.apply(right);
+    }
+
     /// Replaces the left component with a new value.
     ///
     /// @param left new left value
