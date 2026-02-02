@@ -2,6 +2,7 @@ package me.supcheg.routine;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /// An immutable algebraic data type representing an **ordered pair of two non-null values**.
@@ -102,6 +103,15 @@ public record Pair<L, R>(L left, R right) {
     /// @return a [Pair] with inverted type parameters and component order
     public Pair<R, L> flip() {
         return new Pair<>(right, left);
+    }
+
+    /// Folds this [Pair] into a single value.
+    ///
+    /// @param function a bifunction applied to the left and right components
+    /// @param <T>      result type
+    /// @return the result of applying the function to both components
+    public <T> T fold(BiFunction<? super L, ? super R, ? extends T> function) {
+        return function.apply(left, right);
     }
 
     /// Converts this pair into a standard [Map.Entry].

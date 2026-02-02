@@ -14,6 +14,7 @@ class PairTest {
     static final String RIGHT = "_right";
     static final String MAP = "_map";
     static final String WITH = "_with";
+    static final String FOLD = "_fold";
 
     @Test
     void map() {
@@ -32,6 +33,12 @@ class PairTest {
     @Test
     void flip() {
         assertThat(pair(LEFT, RIGHT).flip()).isEqualTo(pair(RIGHT, LEFT));
+    }
+
+    @Test
+    void fold() {
+        assertThat(pair(LEFT, RIGHT).<String>fold((left, right) -> left + FOLD + right))
+                .isEqualTo(LEFT + FOLD + RIGHT);
     }
 
     @Test
