@@ -90,7 +90,7 @@ class EitherTest {
         var rightPeek = consumerMock();
 
         assertThat(left(LEFT).peek(leftPeek, rightPeek)).isEqualTo(left(LEFT));
-        verify(leftPeek, only()).accept(any());
+        verify(leftPeek, only()).accept(LEFT);
         verify(rightPeek, never()).accept(any());
     }
 
@@ -101,7 +101,7 @@ class EitherTest {
 
         assertThat(right(RIGHT).peek(leftPeek, rightPeek)).isEqualTo(right(RIGHT));
         verify(leftPeek, never()).accept(any());
-        verify(rightPeek, only()).accept(any());
+        verify(rightPeek, only()).accept(RIGHT);
     }
 
     @Test
@@ -109,7 +109,7 @@ class EitherTest {
         var peek = consumerMock();
 
         assertThat(left(LEFT).peekLeft(peek)).isEqualTo(left(LEFT));
-        verify(peek, only()).accept(any());
+        verify(peek, only()).accept(LEFT);
     }
 
     @Test
@@ -133,14 +133,14 @@ class EitherTest {
         var peek = consumerMock();
 
         assertThat(right(RIGHT).peekRight(peek)).isEqualTo(right(RIGHT));
-        verify(peek, only()).accept(any());
+        verify(peek, only()).accept(RIGHT);
     }
 
     @Test
     void leftIfLeft() {
         var ifLeft = consumerMock();
         left(LEFT).ifLeft(ifLeft);
-        verify(ifLeft, only()).accept(any());
+        verify(ifLeft, only()).accept(LEFT);
     }
 
     @Test
@@ -160,7 +160,7 @@ class EitherTest {
     @Test
     void rightIfRight() {
         var ifRight = consumerMock();
-        right(LEFT).ifRight(ifRight);
-        verify(ifRight, only()).accept(any());
+        right(RIGHT).ifRight(ifRight);
+        verify(ifRight, only()).accept(RIGHT);
     }
 }
