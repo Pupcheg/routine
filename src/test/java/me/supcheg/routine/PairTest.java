@@ -6,7 +6,11 @@ import java.util.Map;
 
 import static me.supcheg.routine.Pair.pair;
 import static me.supcheg.routine.Pair.pairFromEntry;
+import static me.supcheg.routine.TestPairs.biConsumerMock;
+import static me.supcheg.routine.TestPairs.consumerMock;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 
 class PairTest {
 
@@ -50,6 +54,27 @@ class PairTest {
     void fold() {
         assertThat(pair(LEFT, RIGHT).<String>fold((left, right) -> left + FOLD + right))
                 .isEqualTo(LEFT + FOLD + RIGHT);
+    }
+
+    @Test
+    void peek() {
+        var consumer = biConsumerMock();
+        pair(LEFT, RIGHT).peek(consumer);
+        verify(consumer, only()).accept(LEFT, RIGHT);
+    }
+
+    @Test
+    void peekLeft() {
+        var consumer = consumerMock();
+        pair(LEFT, RIGHT).peekLeft(consumer);
+        verify(consumer, only()).accept(LEFT);
+    }
+
+    @Test
+    void peekRight() {
+        var consumer = consumerMock();
+        pair(LEFT, RIGHT).peekRight(consumer);
+        verify(consumer, only()).accept(RIGHT);
     }
 
     @Test
