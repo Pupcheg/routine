@@ -2,7 +2,10 @@ package me.supcheg.routine;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static me.supcheg.routine.Pair.pair;
+import static me.supcheg.routine.Pair.pairFromEntry;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PairTest {
@@ -29,5 +32,13 @@ class PairTest {
     @Test
     void flip() {
         assertThat(pair(LEFT, RIGHT).flip()).isEqualTo(pair(RIGHT, LEFT));
+    }
+
+    @Test
+    void entry() {
+        var entry = Map.entry(LEFT, RIGHT);
+        var pair = pair(LEFT, RIGHT);
+        assertThat(pairFromEntry(entry)).isEqualTo(pair);
+        assertThat(pair.asEntry()).isEqualTo(entry);
     }
 }
