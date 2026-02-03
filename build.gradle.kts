@@ -34,6 +34,12 @@ spotless {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
 tasks {
     test {
         useJUnitPlatform()
