@@ -20,8 +20,8 @@ public sealed interface Either<L, R> {
     /// `value` is guaranteed to be non-null.
     ///
     /// @param value left value
-    /// @param <L> type of the stored value
-    /// @param <R> type of the right branch (phantom type parameter)
+    /// @param <L>   type of the stored value
+    /// @param <R>   type of the right branch (phantom type parameter)
     record Left<L, R>(L value) implements Either<L, R> {
 
         /// Constructs a [Left] instance with a non-null value.
