@@ -1,3 +1,6 @@
+import com.diffplug.spotless.FormatterFunc
+import java.io.Serializable
+
 plugins {
     `java-library`
     id("com.bakdata.mockito") version "1.11.1"
@@ -31,6 +34,21 @@ spotless {
         forbidWildcardImports()
 
         targetExclude("build/**")
+
+        custom("add missing since tag", object : FormatterFunc, Serializable {
+            val markdownJavadoc = Regex("(?m)^\\s*\\/\\/\\/.*(?:\\n\\s*\\/\\/\\/.*)*")
+
+            override fun apply(source: String): String {
+                val missing = markdownJavadoc.findAll(source)
+                    .filter { !it.value.contains("@since") }
+                    .map { "@since tag required at line ${source.substring(0, it.range.last).lines().size}" }
+                    .toList()
+                if (missing.isNotEmpty()) {
+                    throw AssertionError(missing.joinToString("\n"))
+                }
+                return source
+            }
+        })
     }
 }
 
