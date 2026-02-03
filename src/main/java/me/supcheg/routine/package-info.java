@@ -5,6 +5,7 @@
 ///
 /// @see me.supcheg.routine.Pair
 /// @see me.supcheg.routine.Either
+/// @since 1.0.0
 @NullMarked
 package me.supcheg.routine;
 

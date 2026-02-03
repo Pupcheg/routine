@@ -17,11 +17,13 @@ import java.util.function.Function;
 /// @param <R>   type of the right component
 /// @see Either
 /// @see Map.Entry
+/// @since 1.0.0
 public record Pair<L, R>(L left, R right) {
 
     /// Constructs a [Pair] with non-null components.
     ///
     /// @throws NullPointerException if either [Pair#left] or [Pair#right] is `null`
+    /// @since 1.0.0
     public Pair {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");
@@ -36,6 +38,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param <L>   left type
     /// @param <R>   right type
     /// @return a new [Pair] containing the given values
+    /// @since 1.0.0
     public static <L, R> Pair<L, R> pair(L left, R right) {
         return new Pair<>(left, right);
     }
@@ -49,6 +52,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param <R>   value type
     /// @return a [Pair] representing the given entry
     /// @throws NullPointerException if the key or value of the entry is `null`
+    /// @since 1.0.0
     public static <L, R> Pair<L, R> pairFromEntry(Map.Entry<L, R> entry) {
         return pair(entry.getKey(), entry.getValue());
     }
@@ -62,6 +66,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param <NL>  new left type
     /// @param <NR>  new right type
     /// @return a new [Pair] with both components transformed
+    /// @since 1.0.0
     public <NL, NR> Pair<NL, NR> map(Function<? super L, ? extends NL> left, Function<? super R, ? extends NR> right) {
         return new Pair<>(left.apply(this.left), right.apply(this.right));
     }
@@ -71,6 +76,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param left mapping function for the left component
     /// @param <NL> new left type
     /// @return a new [Pair] with a transformed left component
+    /// @since 1.0.0
     public <NL> Pair<NL, R> mapLeft(Function<? super L, ? extends NL> left) {
         return new Pair<>(left.apply(this.left), right);
     }
@@ -80,6 +86,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param right mapping function for the right component
     /// @param <NR>  new right type
     /// @return a new [Pair] with a transformed right component
+    /// @since 1.0.0
     public <NR> Pair<L, NR> mapRight(Function<? super R, ? extends NR> right) {
         return new Pair<>(left, right.apply(this.right));
     }
@@ -90,6 +97,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param <NL>     new left type
     /// @param <NR>     new right type
     /// @return [Pair] produced by the given function
+    /// @since 1.0.0
     public <NL, NR> Pair<NL, NR> flatMap(BiFunction<? super L, ? super R, Pair<NL, NR>> function) {
         return function.apply(left, right);
     }
@@ -100,6 +108,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param <NL>     new left type
     /// @param <NR>     new right type
     /// @return [Pair] produced by applying the function to the left component
+    /// @since 1.0.0
     public <NL, NR> Pair<NL, NR> flatMapLeft(Function<? super L, Pair<NL, NR>> function) {
         return function.apply(left);
     }
@@ -110,6 +119,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param <NL>     new left type
     /// @param <NR>     new right type
     /// @return [Pair] produced by applying the function to the right component
+    /// @since 1.0.0
     public <NL, NR> Pair<NL, NR> flatMapRight(Function<? super R, Pair<NL, NR>> function) {
         return function.apply(right);
     }
@@ -119,6 +129,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param left new left value
     /// @param <NL> new left type
     /// @return a new [Pair] with the specified left component
+    /// @since 1.0.0
     public <NL> Pair<NL, R> withLeft(NL left) {
         return new Pair<>(left, right);
     }
@@ -128,6 +139,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param right new right value
     /// @param <NR>  new right type
     /// @return a new [Pair] with the specified right component
+    /// @since 1.0.0
     public <NR> Pair<L, NR> withRight(NR right) {
         return new Pair<>(left, right);
     }
@@ -135,6 +147,7 @@ public record Pair<L, R>(L left, R right) {
     /// Swaps the left and right components.
     ///
     /// @return a [Pair] with inverted type parameters and component order
+    /// @since 1.0.0
     public Pair<R, L> flip() {
         return new Pair<>(right, left);
     }
@@ -144,6 +157,7 @@ public record Pair<L, R>(L left, R right) {
     /// @param function a bifunction applied to the left and right components
     /// @param <T>      result type
     /// @return the result of applying the function to both components
+    /// @since 1.0.0
     public <T> T fold(BiFunction<? super L, ? super R, ? extends T> function) {
         return function.apply(left, right);
     }
@@ -152,6 +166,7 @@ public record Pair<L, R>(L left, R right) {
     ///
     /// @param consumer a bifunctional consumer applied to the left and right components
     /// @return this [Pair], unchanged
+    /// @since 1.0.0
     public Pair<L, R> peek(BiConsumer<? super L, ? super R> consumer) {
         consumer.accept(left, right);
         return this;
@@ -161,6 +176,7 @@ public record Pair<L, R>(L left, R right) {
     ///
     /// @param consumer consumer applied to the left component
     /// @return this [Pair], unchanged
+    /// @since 1.0.0
     public Pair<L, R> peekLeft(Consumer<? super L> consumer) {
         consumer.accept(left);
         return this;
@@ -170,6 +186,7 @@ public record Pair<L, R>(L left, R right) {
     ///
     /// @param consumer consumer applied to the right component
     /// @return this [Pair], unchanged
+    /// @since 1.0.0
     public Pair<L, R> peekRight(Consumer<? super R> consumer) {
         consumer.accept(right);
         return this;
@@ -180,6 +197,7 @@ public record Pair<L, R>(L left, R right) {
     /// The left component becomes the key, and the right component becomes the value.
     ///
     /// @return a [Map.Entry] view of this pair
+    /// @since 1.0.0
     public Map.Entry<L, R> asEntry() {
         return Map.entry(left, right);
     }

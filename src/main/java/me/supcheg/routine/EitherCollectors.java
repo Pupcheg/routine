@@ -12,6 +12,7 @@ import static me.supcheg.routine.Pair.pair;
 ///
 /// @see Either
 /// @see Pair
+/// @since 1.0.0
 public final class EitherCollectors {
 
     private EitherCollectors() {}
@@ -45,6 +46,7 @@ public final class EitherCollectors {
     /// // result.left() -> [1, 2]
     /// // result.right() -> ["a", "b"]
     /// ```
+    /// @since 1.0.0
     public static <L, R, LA, RA, LR, RR> Collector<Either<L, R>, ?, Pair<LR, RR>> groupingTo(
             Collector<? super L, LA, ? extends LR> leftDownstream,
             Collector<? super R, RA, ? extends RR> rightDownstream) {
