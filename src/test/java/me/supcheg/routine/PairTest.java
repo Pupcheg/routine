@@ -59,21 +59,24 @@ class PairTest {
     @Test
     void peek() {
         var consumer = biConsumerMock();
-        pair(LEFT, RIGHT).peek(consumer);
+        var pair = pair(LEFT, RIGHT);
+        assertThat(pair.peek(consumer)).isSameAs(pair);
         verify(consumer, only()).accept(LEFT, RIGHT);
     }
 
     @Test
     void peekLeft() {
         var consumer = consumerMock();
-        pair(LEFT, RIGHT).peekLeft(consumer);
+        var pair = pair(LEFT, RIGHT);
+        assertThat(pair.peekLeft(consumer)).isSameAs(pair);
         verify(consumer, only()).accept(LEFT);
     }
 
     @Test
     void peekRight() {
         var consumer = consumerMock();
-        pair(LEFT, RIGHT).peekRight(consumer);
+        var pair = pair(LEFT, RIGHT);
+        assertThat(pair.peekRight(consumer)).isSameAs(pair);
         verify(consumer, only()).accept(RIGHT);
     }
 
