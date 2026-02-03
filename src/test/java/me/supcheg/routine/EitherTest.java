@@ -89,7 +89,8 @@ class EitherTest {
         var leftPeek = consumerMock();
         var rightPeek = consumerMock();
 
-        assertThat(left(LEFT).peek(leftPeek, rightPeek)).isEqualTo(left(LEFT));
+        var left = left(LEFT);
+        assertThat(left.peek(leftPeek, rightPeek)).isSameAs(left);
         verify(leftPeek, only()).accept(LEFT);
         verify(rightPeek, never()).accept(any());
     }
@@ -99,7 +100,8 @@ class EitherTest {
         var leftPeek = consumerMock();
         var rightPeek = consumerMock();
 
-        assertThat(right(RIGHT).peek(leftPeek, rightPeek)).isEqualTo(right(RIGHT));
+        var right = right(RIGHT);
+        assertThat(right.peek(leftPeek, rightPeek)).isSameAs(right);
         verify(leftPeek, never()).accept(any());
         verify(rightPeek, only()).accept(RIGHT);
     }
@@ -108,7 +110,8 @@ class EitherTest {
     void leftPeekLeft() {
         var peek = consumerMock();
 
-        assertThat(left(LEFT).peekLeft(peek)).isEqualTo(left(LEFT));
+        var left = left(LEFT);
+        assertThat(left.peekLeft(peek)).isSameAs(left);
         verify(peek, only()).accept(LEFT);
     }
 
@@ -116,7 +119,8 @@ class EitherTest {
     void rightPeekLeft() {
         var peek = consumerMock();
 
-        assertThat(right(RIGHT).peekLeft(peek)).isEqualTo(right(RIGHT));
+        var right = right(RIGHT);
+        assertThat(right.peekLeft(peek)).isSameAs(right);
         verify(peek, never()).accept(any());
     }
 
@@ -124,7 +128,8 @@ class EitherTest {
     void leftPeekRight() {
         var peek = consumerMock();
 
-        assertThat(left(LEFT).peekRight(peek)).isEqualTo(left(LEFT));
+        var left = left(LEFT);
+        assertThat(left.peekRight(peek)).isSameAs(left);
         verify(peek, never()).accept(any());
     }
 
@@ -132,7 +137,8 @@ class EitherTest {
     void rightPeekRight() {
         var peek = consumerMock();
 
-        assertThat(right(RIGHT).peekRight(peek)).isEqualTo(right(RIGHT));
+        var right = right(RIGHT);
+        assertThat(right.peekRight(peek)).isSameAs(right);
         verify(peek, only()).accept(RIGHT);
     }
 
