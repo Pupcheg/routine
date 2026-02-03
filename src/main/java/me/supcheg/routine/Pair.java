@@ -11,8 +11,10 @@ import java.util.function.Function;
 ///
 /// `Pair<L, R>` always contains **both** a value of type `L` and a value of type `R`.
 ///
-/// @param <L> type of the left component
-/// @param <R> type of the right component
+/// @param left  left component
+/// @param right right component
+/// @param <L>   type of the left component
+/// @param <R>   type of the right component
 /// @see Either
 /// @see Map.Entry
 public record Pair<L, R>(L left, R right) {
