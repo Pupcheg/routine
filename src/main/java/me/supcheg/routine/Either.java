@@ -33,22 +33,6 @@ public sealed interface Either<L, R> {
         public Left {
             Objects.requireNonNull(value, "value");
         }
-
-        /// Casts `Left<L, R>` to `Left<L, NR>` without modifying the stored value.
-        ///
-        /// This method preserves the left value while changing the right type parameter. It performs an
-        /// unchecked cast and is therefore **type-unsafe**, but logically sound due to the absence of any
-        /// right-side value.
-        ///
-        /// Intended for internal use in transformation methods.
-        ///
-        /// @param <NR> new right-side type
-        /// @return the same object with a different type parameter
-        /// @since 1.0.0
-        @SuppressWarnings("unchecked")
-        public <NR> Left<L, NR> castRight() {
-            return (Left<L, NR>) this;
-        }
     }
 
     /// Represents the right variant of [Either].
@@ -67,16 +51,6 @@ public sealed interface Either<L, R> {
         /// @since 1.0.0
         public Right {
             Objects.requireNonNull(value, "value");
-        }
-
-        /// Casts `Right<L, R>` to `Right<NL, R>` without modifying the stored value.
-        ///
-        /// @param <NL> new left-side type
-        /// @return the same object with a different type parameter
-        /// @since 1.0.0
-        @SuppressWarnings("unchecked")
-        public <NL> Right<NL, R> castLeft() {
-            return (Right<NL, R>) this;
         }
     }
 
@@ -127,10 +101,14 @@ public sealed interface Either<L, R> {
     /// @param <NL> new left type
     /// @return [Either] with transformed left value
     /// @since 1.0.0
-    default <NL> Either<NL, ? extends R> mapLeft(Function<? super L, ? extends NL> left) {
+    default <NL> Either<NL, R> mapLeft(Function<? super L, ? extends NL> left) {
         return switch (this) {
             case Left(var value) -> left(left.apply(value));
-            case Right<L, R> right -> right.castLeft();
+            case Right<L, R> right -> {
+                @SuppressWarnings("unchecked")
+                var result = (Either<NL, R>) right;
+                yield result;
+            }
         };
     }
 
@@ -142,7 +120,11 @@ public sealed interface Either<L, R> {
     /// @since 1.0.0
     default <NR> Either<L, NR> mapRight(Function<? super R, ? extends NR> right) {
         return switch (this) {
-            case Left<L, R> left -> left.castRight();
+            case Left<L, R> left -> {
+                @SuppressWarnings("unchecked")
+                var result = (Either<L, NR>) left;
+                yield result;
+            }
             case Right(var value) -> right(right.apply(value));
         };
     }
@@ -156,11 +138,15 @@ public sealed interface Either<L, R> {
     /// @return result of the composition
     /// @since 1.0.0
     default <NL, NR> Either<NL, NR> flatMap(
-            Function<? super L, Either<NL, NR>> left, Function<? super R, Either<NL, NR>> right) {
-        return switch (this) {
-            case Left(var value) -> left.apply(value);
-            case Right(var value) -> right.apply(value);
-        };
+            Function<? super L, ? extends Either<? extends NL, ? extends NR>> left,
+            Function<? super R, ? extends Either<? extends NL, ? extends NR>> right) {
+        @SuppressWarnings("unchecked")
+        var result = (Either<NL, NR>)
+                switch (this) {
+                    case Left(var value) -> left.apply(value);
+                    case Right(var value) -> right.apply(value);
+                };
+        return Objects.requireNonNull(result);
     }
 
     /// Monadic composition on the left branch only.
@@ -169,11 +155,14 @@ public sealed interface Either<L, R> {
     /// @param <NL> new left type
     /// @return composed [Either]
     /// @since 1.0.0
-    default <NL> Either<NL, R> flatMapLeft(Function<? super L, Either<NL, R>> left) {
-        return switch (this) {
-            case Left(var value) -> left.apply(value);
-            case Right<L, R> right -> right.castLeft();
-        };
+    default <NL> Either<NL, R> flatMapLeft(Function<? super L, ? extends Either<? extends NL, ? extends R>> left) {
+        @SuppressWarnings("unchecked")
+        var result = (Either<NL, R>)
+                switch (this) {
+                    case Left(var value) -> Objects.requireNonNull(left.apply(value));
+                    case Right<L, R> right -> right;
+                };
+        return result;
     }
 
     /// Monadic composition on the right branch only.
@@ -182,11 +171,14 @@ public sealed interface Either<L, R> {
     /// @param <NR>  new right type
     /// @return composed [Either]
     /// @since 1.0.0
-    default <NR> Either<L, NR> flatMapRight(Function<? super R, Either<L, NR>> right) {
-        return switch (this) {
-            case Left<L, R> left -> left.castRight();
-            case Right(var value) -> right.apply(value);
-        };
+    default <NR> Either<L, NR> flatMapRight(Function<? super R, ? extends Either<? extends L, ? extends NR>> right) {
+        @SuppressWarnings("unchecked")
+        var result = (Either<L, NR>)
+                switch (this) {
+                    case Left<L, R> left -> left;
+                    case Right(var value) -> Objects.requireNonNull(right.apply(value));
+                };
+        return result;
     }
 
     /// Swaps the left and right branches.
