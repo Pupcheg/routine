@@ -1,10 +1,12 @@
 import com.diffplug.spotless.FormatterFunc
+import com.vanniktech.maven.publish.SonatypeHost
 import java.io.Serializable
 
 plugins {
     `java-library`
     id("com.bakdata.mockito") version "1.11.1"
     id("com.diffplug.spotless") version "8.2.0"
+    id("com.vanniktech.maven.publish") version "0.31.0"
 }
 
 group = "me.supcheg"
@@ -56,8 +58,37 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }
-    withSourcesJar()
-    withJavadocJar()
+}
+
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates("me.supcheg", "routine", version.toString())
+
+    pom {
+        name = "routine"
+        description = "Utility types for Java: Either, Pair, and more."
+        url = "https://github.com/Pupcheg/routine"
+        licenses {
+            license {
+                name = "MIT License"
+                url = "https://opensource.org/licenses/MIT"
+            }
+        }
+        developers {
+            developer {
+                id = "Pupcheg"
+                name = "Supcheg"
+                url = "https://github.com/Pupcheg"
+            }
+        }
+        scm {
+            url = "https://github.com/Pupcheg/routine"
+            connection = "scm:git:git://github.com/Pupcheg/routine.git"
+            developerConnection = "scm:git:ssh://git@github.com/Pupcheg/routine.git"
+        }
+    }
 }
 
 tasks {
